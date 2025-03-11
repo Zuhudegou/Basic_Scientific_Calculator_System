@@ -3169,24 +3169,24 @@ Image component sizes
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
          0          0          0          0          0       4508   core_cm3.o
-        60         12          0          0          0       1125   main.o
-       120         16          0          0          0     205311   misc.o
-      3504        100          0          0          0      21987   oled.o
-       614         30          0          1       1024       9179   oled_driver.o
-         0          0      17229          0          0       2977   oled_fonts.o
-      9704        426         20         46        408      41303   oled_ui.o
-       470         38          0          4          0       5488   oled_ui_driver.o
-       540        104       1714       7480        144       8201   oled_ui_menudata.o
-        64         26        236          0       1536        900   startup_stm32f10x_md.o
-         0          0          0          0          0       1776   stm32f10x_adc.o
-       186          0          0          0          0      11864   stm32f10x_gpio.o
-        18          0          0          0          0       4786   stm32f10x_it.o
-        48         12          0          0          0       1338   stm32f10x_rcc.o
-       924        104          0          0          0      34662   stm32f10x_tim.o
-       248         24          0          0          0      30741   system_stm32f10x.o
+        60         12          0          0          0        889   main.o
+       120         16          0          0          0     204715   misc.o
+      3504        100          0          0          0      19739   oled.o
+       614         30          0          1       1024       7403   oled_driver.o
+         0          0      17229          0          0       2621   oled_fonts.o
+      9704        426         20         46        408      35479   oled_ui.o
+       470         38          0          4          0       4420   oled_ui_driver.o
+       540        104       1714       7480        144       6897   oled_ui_menudata.o
+        64         26        236          0       1536        824   startup_stm32f10x_md.o
+         0          0          0          0          0       1656   stm32f10x_adc.o
+       186          0          0          0          0      11268   stm32f10x_gpio.o
+        18          0          0          0          0       3714   stm32f10x_it.o
+        48         12          0          0          0       1106   stm32f10x_rcc.o
+       924        104          0          0          0      32282   stm32f10x_tim.o
+       248         24          0          0          0      30145   system_stm32f10x.o
 
     ----------------------------------------------------------------------
-     16534        892      19254       7536       3112     386146   Object Totals
+     16534        892      19254       7536       3112     367666   Object Totals
          0          0         32          0          0          0   (incl. Generated)
         34          0         23          5          0          0   (incl. Padding)
 
@@ -3334,8 +3334,8 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     30022       1600      19970       7536       3208     383062   Grand Totals
-     30022       1600      19970       1212       3208     383062   ELF Image Totals (compressed)
+     30022       1600      19970       7536       3208     364582   Grand Totals
+     30022       1600      19970       1212       3208     364582   ELF Image Totals (compressed)
      30022       1600      19970       1212          0          0   ROM Totals
 
 ==============================================================================
