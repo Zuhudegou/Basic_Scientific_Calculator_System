@@ -1,337 +1,219 @@
-#include "OLED_driver.h"
+#include "OLED_UI_Driver.h"
 
-
-
-
-
-
-uint8_t OLED_DisplayBuf[64/8][128];
-
-bool OLED_ColorMode = true;
-
-/**
-  * 函    数：OLED写SCL高低电平
-  * 参    数：要写入SCL的电平值，范围：0/1
-  * 返 回 值：无
-  * 说    明：当上层函数需要写SCL时，此函数会被调用
-  *           用户需要根据参数传入的值，将SCL置为高电平或者低电平
-  *           当参数传入0时，置SCL为低电平，当参数传入1时，置SCL为高电平
-  */
-void OLED_W_SCL(uint8_t BitValue)
-{
-	/*根据BitValue的值，将SCL置高电平或者低电平*/
-	GPIO_WriteBit(GPIOB, GPIO_Pin_8, (BitAction)BitValue);
-	
-	/*如果单片机速度过快，可在此添加适量延时，以避免超出I2C通信的最大速度*/
-	//...
-}
-
-/**
-  * 函    数：OLED写SDA高低电平
-  * 参    数：要写入SDA的电平值，范围：0/1
-  * 返 回 值：无
-  * 说    明：当上层函数需要写SDA时，此函数会被调用
-  *           用户需要根据参数传入的值，将SDA置为高电平或者低电平
-  *           当参数传入0时，置SDA为低电平，当参数传入1时，置SDA为高电平
-  */
-void OLED_W_SDA(uint8_t BitValue)
-{
-	/*根据BitValue的值，将SDA置高电平或者低电平*/
-	GPIO_WriteBit(GPIOB, GPIO_Pin_9, (BitAction)BitValue);
-	
-	/*如果单片机速度过快，可在此添加适量延时，以避免超出I2C通信的最大速度*/
-	//...
-}
-
-/*通信协议*********************/
-
-/**
-  * 函    数：I2C起始
-  * 参    数：无
-  * 返 回 值：无
-  */
-void OLED_I2C_Start(void)
-{
-
-	
-	OLED_W_SDA(1);		//释放SDA，确保SDA为高电平
-	OLED_W_SCL(1);		//释放SCL，确保SCL为高电平
-	OLED_W_SDA(0);		//在SCL高电平期间，拉低SDA，产生起始信号
-	OLED_W_SCL(0);		//起始后把SCL也拉低，即为了占用总线，也为了方便总线时序的拼接
-}
-
-/**
-  * 函    数：I2C终止
-  * 参    数：无
-  * 返 回 值：无
-  */
-void OLED_I2C_Stop(void)
-{
-	
-	OLED_W_SDA(0);		//拉低SDA，确保SDA为低电平
-	OLED_W_SCL(1);		//释放SCL，使SCL呈现高电平
-	OLED_W_SDA(1);		//在SCL高电平期间，释放SDA，产生终止信号
-}
+/*
+【文件说明】：[硬件抽象层]
+此文件包含按键与编码器的驱动程序，如果需要移植此项目，请根据实际情况修改相关代码。
+当你确保oled屏幕能够正常点亮，并且能够正确地运行基础功能时（如显示字符串等），就可以开始移植
+有关按键与编码器等的驱动程序了。
+*/
 
 
 /**
-  * 函    数：I2C发送一个字节
-  * 参    数：Byte 要发送的一个字节数据，范围：0x00~0xFF
-  * 返 回 值：无
-  */
-void OLED_I2C_SendByte(uint8_t Byte)
-{
-	uint8_t i;
-	
-	/*循环8次，主机依次发送数据的每一位*/
-	for (i = 0; i < 8; i++)
-	{
-		/*使用掩码的方式取出Byte的指定一位数据并写入到SDA线*/
-		/*两个!的作用是，让所有非零的值变为1*/
-		OLED_W_SDA(!!(Byte & (0x80 >> i)));
-		OLED_W_SCL(1);	//释放SCL，从机在SCL高电平期间读取SDA
-		OLED_W_SCL(0);	//拉低SCL，主机开始发送下一位数据
-	}
-	
-	OLED_W_SCL(1);		//额外的一个时钟，不处理应答信号
-	OLED_W_SCL(0);
-}
-
-/**
-  * 函    数：OLED写命令
-  * 参    数：Command 要写入的命令值，范围：0x00~0xFF
-  * 返 回 值：无
-  */
-void OLED_WriteCommand(uint8_t Command)
-{
-	OLED_I2C_Start();				//I2C起始
-	OLED_I2C_SendByte(0x78);		//发送OLED的I2C从机地址
-	OLED_I2C_SendByte(0x00);		//控制字节，给0x00，表示即将写命令
-	OLED_I2C_SendByte(Command);		//写入指定的命令
-	OLED_I2C_Stop();				//I2C终止
-}
-/**
- * @brief 设置显示模式
- * @param colormode true: 黑色模式，false: 白色模式
+ * @brief 定时器中断服务函数的初始化函数，用于产生20ms的定时器中断
+ * @param 无
  * @return 无
  */
-void OLED_SetColorMode(bool colormode){
-	OLED_ColorMode = colormode;
-}
-/**
-  * 函    数：OLED写数据
-  * 参    数：Data 要写入数据的起始地址
-  * 参    数：Count 要写入数据的数量
-  * 返 回 值：无
-  */
-void OLED_WriteData(uint8_t *Data, uint8_t Count)
+void Timer_Init(void)
 {
-	uint8_t i;
+	/*开启时钟*/
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);			//开启TIM4的时钟
 	
-	OLED_I2C_Start();				//I2C起始
-	OLED_I2C_SendByte(0x78);		//发送OLED的I2C从机地址
-	OLED_I2C_SendByte(0x40);		//控制字节，给0x40，表示即将写数据
-	/*循环Count次，进行连续的数据写入*/
-	for (i = 0; i < Count; i ++)
-	{
-		if(OLED_ColorMode){
-			OLED_I2C_SendByte(Data[i]);	//依次发送Data的每一个数据
-		}else{
-			OLED_I2C_SendByte(~Data[i]);	//依次发送Data的每一个数据
-		}
-	}
-	OLED_I2C_Stop();				//I2C终止
+	/*配置时钟源*/
+	TIM_InternalClockConfig(TIM4);		//选择TIM4为内部时钟，若不调用此函数，TIM默认也为内部时钟
+	
+	/*时基单元初始化*/
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;				//定义结构体变量
+	TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;		//时钟分频，选择不分频，此参数用于配置滤波器时钟，不影响时基单元功能
+	TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up;	//计数器模式，选择向上计数
+	TIM_TimeBaseInitStructure.TIM_Period = 200 - 1;				//计数周期，即ARR的值
+	TIM_TimeBaseInitStructure.TIM_Prescaler = 7200 - 1;				//预分频器，即PSC的值
+	TIM_TimeBaseInitStructure.TIM_RepetitionCounter = 0;			//重复计数器，高级定时器才会用到
+	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseInitStructure);				//将结构体变量交给TIM_TimeBaseInit，配置TIM4的时基单元	
+	
+	/*中断输出配置*/
+	TIM_ClearFlag(TIM4, TIM_FLAG_Update);						//清除定时器更新标志位
+																//TIM_TimeBaseInit函数末尾，手动产生了更新事件
+																//若不清除此标志位，则开启中断后，会立刻进入一次中断
+																//如果不介意此问题，则不清除此标志位也可
+	
+	TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);					//开启TIM4的更新中断
+	
+	/*NVIC中断分组*/
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);				//配置NVIC为分组2
+																//即抢占优先级范围：0~3，响应优先级范围：0~3
+																//此分组配置在整个工程中仅需调用一次
+																//若有多个中断，可以把此代码放在main函数内，while循环之前
+																//若调用多次配置分组的代码，则后执行的配置会覆盖先执行的配置
+	
+	/*NVIC配置*/
+	NVIC_InitTypeDef NVIC_InitStructure;						//定义结构体变量
+	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;				//选择配置NVIC的TIM4线
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;				//指定NVIC线路使能
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;	//指定NVIC线路的抢占优先级为2
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;			//指定NVIC线路的响应优先级为1
+	NVIC_Init(&NVIC_InitStructure);								//将结构体变量交给NVIC_Init，配置NVIC外设
+	
+	/*TIM使能*/
+	TIM_Cmd(TIM4, ENABLE);			//使能TIM4，定时器开始运行
 }
 
-/*********************通信协议*/
-
-
-
-
 /**
-  * 函    数：OLED引脚初始化
-  * 参    数：无
-  * 返 回 值：无
-  * 说    明：当上层函数需要初始化时，此函数会被调用
-  *           用户需要将SCL和SDA引脚初始化为开漏模式，并释放引脚
-  */
-void OLED_GPIO_Init(void)
+ * @brief 按键初始化函数，用于初始化按键GPIO
+ * @param 无
+ * @note GPIO被初始化为上拉输入模式（虽然在我的开发板上已经加上了上拉电阻，但是以防万一）
+ * @return 无
+ */
+void Key_Init(void)
 {
-	uint32_t i, j;
-	
-	/*在初始化前，加入适量延时，待OLED供电稳定*/
-	for (i = 0; i < 1000; i ++)
-	{
-		for (j = 0; j < 1000; j ++);
-	}
-	
-	/*将SCL和SDA引脚初始化为开漏模式*/
+	GPIO_InitTypeDef GPIO_InitStructure;
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;  
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
+}
+
+
+
+/**
+ * @brief 编码器初始化函数，将定时器1配置为编码器模式
+ * @param 无
+ * @return 无
+ */
+void Encoder_Init(void)
+{
+	
+	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+	
 	
 	GPIO_InitTypeDef GPIO_InitStructure;
- 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
- 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
- 	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+		
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
+	TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+	TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimeBaseInitStructure.TIM_Period = 65536 - 1;		//ARR
+	TIM_TimeBaseInitStructure.TIM_Prescaler = 1 - 1;		//PSC
+	TIM_TimeBaseInitStructure.TIM_RepetitionCounter = 0;
+	TIM_TimeBaseInit(TIM1, &TIM_TimeBaseInitStructure);
 	
-	/*释放SCL和SDA*/
-	OLED_W_SCL(1);
-	OLED_W_SDA(1);
+	TIM_ICInitTypeDef TIM_ICInitStructure;
+	TIM_ICStructInit(&TIM_ICInitStructure);
+	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
+	TIM_ICInitStructure.TIM_ICFilter = 0xF;
+	TIM_ICInit(TIM1, &TIM_ICInitStructure);
+	TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
+	TIM_ICInitStructure.TIM_ICFilter = 0xF;
+	TIM_ICInit(TIM1, &TIM_ICInitStructure);
+	
+	TIM_EncoderInterfaceConfig(TIM1, TIM_EncoderMode_TI12, TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);
+	
+	TIM_Cmd(TIM1, ENABLE);
+	
+	TIM_SetCounter(TIM1, 0);
 }
+
+
 /**
-  * 函    数：OLED设置显示光标位置
-  * 参    数：Page 指定光标所在的页，范围：0~7
-  * 参    数：X 指定光标所在的X轴坐标，范围：0~127
-  * 返 回 值：无
-  * 说    明：OLED默认的Y轴，只能8个Bit为一组写入，即1页等于8个Y轴坐标
-  */
-void OLED_SetCursor(uint8_t Page, uint8_t X)
+ * @brief 编码器使能函数
+ * @param 无
+ * @return 无
+ */
+void Encoder_Enable(void)
 {
-	/*如果使用此程序驱动1.3寸的OLED显示屏，则需要解除此注释*/
-	/*因为1.3寸的OLED驱动芯片（SH1106）有132列*/
-	/*屏幕的起始列接在了第2列，而不是第0列*/
-	/*所以需要将X加2，才能正常显示*/
-//	X += 2;
-	
-	/*通过指令设置页地址和列地址*/
-	OLED_WriteCommand(0xB0 | Page);					//设置页位置
-	OLED_WriteCommand(0x10 | ((X & 0xF0) >> 4));	//设置X位置高4位
-	OLED_WriteCommand(0x00 | (X & 0x0F));			//设置X位置低4位
+	TIM_Cmd(TIM1, ENABLE);
 }
-void OLED_Clear(void);
+
 /**
-  * 函    数：OLED初始化
-  * 参    数：无
-  * 返 回 值：无
-  * 说    明：使用前，需要调用此初始化函数
-  */
-void OLED_Init(void)
+ * @brief 编码器失能函数
+ * @param 无
+ * @return 无
+ */
+void Encoder_Disable(void)
 {
-	OLED_GPIO_Init();			//先调用底层的端口初始化
-	
-	/*写入一系列的命令，对OLED进行初始化配置*/
-	OLED_WriteCommand(0xAE);	//设置显示开启/关闭，0xAE关闭，0xAF开启
-	
-	OLED_WriteCommand(0xD5);	//设置显示时钟分频比/振荡器频率
-	OLED_WriteCommand(0xf0);	//0x00~0xFF
-	
-	OLED_WriteCommand(0xA8);	//设置多路复用率
-	OLED_WriteCommand(0x3F);	//0x0E~0x3F
-	
-	OLED_WriteCommand(0xD3);	//设置显示偏移
-	OLED_WriteCommand(0x00);	//0x00~0x7F
-	
-	OLED_WriteCommand(0x40);	//设置显示开始行，0x40~0x7F
-	
-	OLED_WriteCommand(0xA1);	//设置左右方向，0xA1正常，0xA0左右反置
-	
-	OLED_WriteCommand(0xC8);	//设置上下方向，0xC8正常，0xC0上下反置
-
-	OLED_WriteCommand(0xDA);	//设置COM引脚硬件配置
-	OLED_WriteCommand(0x12);
-	
-	OLED_WriteCommand(0x81);	//设置对比度
-	OLED_WriteCommand(0xDF);	//0x00~0xFF
-
-	OLED_WriteCommand(0xD9);	//设置预充电周期
-	OLED_WriteCommand(0xF1);
-
-	OLED_WriteCommand(0xDB);	//设置VCOMH取消选择级别
-	OLED_WriteCommand(0x30);
-
-	OLED_WriteCommand(0xA4);	//设置整个显示打开/关闭
-
-	OLED_WriteCommand(0xA6);	//设置正常/反色显示，0xA6正常，0xA7反色
-
-	OLED_WriteCommand(0x8D);	//设置充电泵
-	OLED_WriteCommand(0x14);
-
-	OLED_WriteCommand(0xAF);	//开启显示
-	
-	OLED_Clear();				//清空显存数组
-	OLED_Update();				//更新显示，清屏，防止初始化后未显示内容时花屏
+	TIM_Cmd(TIM1, DISABLE);
 }
+
 /**
-  * 函    数：将OLED显存数组更新到OLED屏幕
-  * 参    数：无
-  * 返 回 值：无
-  * 说    明：所有的显示函数，都只是对OLED显存数组进行读写
-  *           随后调用OLED_Update函数或OLED_UpdateArea函数
-  *           才会将显存数组的数据发送到OLED硬件，进行显示
-  *           故调用显示函数后，要想真正地呈现在屏幕上，还需调用更新函数
-  */
-void OLED_Update(void)
+ * @brief 获取编码器的增量计数值（四倍频解码）
+ * 
+ * @details 该函数通过读取定时器TIM1的计数值，对编码器信号进行四倍频解码处理。
+ *          使用静态变量累积计数，并通过除法和取模运算去除多余的增量部分，
+ *          确保返回精确的增量值。主要用于电机控制、位置检测等应用场景。
+ * 
+ * @note   函数内部会自动清零定时器计数值，确保下次读取的准确性
+ * 
+ * @return int16_t 返回解码后的编码器增量值
+ */
+int16_t Encoder_Get(void)
 {
-	uint8_t j;
-	/*遍历每一页*/
-	for (j = 0; j < 8; j ++)
+    // 静态变量，用于在函数调用间保存未被4整除的余数
+    static int32_t encoderAccumulator = 0;
+    
+    // 读取当前定时器计数值
+    int16_t temp = TIM_GetCounter(TIM1);
+    
+    // 清零定时器计数器，为下次读取做准备
+    TIM_SetCounter(TIM1, 0);
+    
+    // 将当前读取值累加到累加器中
+    encoderAccumulator += temp;
+    
+    // 计算四倍频解码后的增量值（去除未完成的部分）
+    int16_t result = encoderAccumulator / 4;
+    
+    // 保存未被4整除的余数，保证精度
+    encoderAccumulator %= 4;
+    
+    // 返回解码后的增量值
+    return result;
+}
+
+
+
+/**
+  * @brief  微秒级延时
+  * @param  xus 延时时长，范围：0~233015
+  * @retval 无
+  */
+void Delay_us(uint32_t xus)
+{
+	SysTick->LOAD = 72 * xus;				//设置定时器重装值
+	SysTick->VAL = 0x00;					//清空当前计数值
+	SysTick->CTRL = 0x00000005;				//设置时钟源为HCLK，启动定时器
+	while(!(SysTick->CTRL & 0x00010000));	//等待计数到0
+	SysTick->CTRL = 0x00000004;				//关闭定时器
+}
+
+/**
+  * @brief  毫秒级延时
+  * @param  xms 延时时长，范围：0~4294967295
+  * @retval 无
+  */
+void Delay_ms(uint32_t xms)
+{
+	while(xms--)
 	{
-		/*设置光标位置为每一页的第一列*/
-		OLED_SetCursor(j, 0);
-		/*连续写入128个数据，将显存数组的数据写入到OLED硬件*/
-		OLED_WriteData(OLED_DisplayBuf[j], 128);
+		Delay_us(1000);
 	}
-	
-	
 }
-
+ 
 /**
-  * 函    数：OLED设置亮度
-  * 参    数：Brightness ，0-255，不同显示芯片效果可能不相同。
-  * 返 回 值：无
-  * 说    明：不要设置过大或者过小。
+  * @brief  秒级延时
+  * @param  xs 延时时长，范围：0~4294967295
+  * @retval 无
   */
-void OLED_Brightness(int16_t Brightness){
-	if(Brightness>255){
-		Brightness=255;
-	}
-	if(Brightness<0){
-		Brightness=0;
-	}
-	OLED_WriteCommand(0x81);
-	OLED_WriteCommand(Brightness);
-}
-/**
-  * 函    数：将OLED显存数组部分更新到OLED屏幕
-  * 参    数：X 指定区域左上角的横坐标，范围：0~OLED_WIDTH-1
-  * 参    数：Y 指定区域左上角的纵坐标，范围：0~OLED_HEIGHT-1
-  * 参    数：Width 指定区域的宽度，范围：0~OLED_WIDTH
-  * 参    数：Height 指定区域的高度，范围：0~OLED_HEIGHT
-  * 返 回 值：无
-  * 说    明：此函数会至少更新参数指定的区域
-  *           如果更新区域Y轴只包含部分页，则同一页的剩余部分会跟随一起更新
-  * 说    明：所有的显示函数，都只是对OLED显存数组进行读写
-  *           随后调用OLED_Update函数或OLED_UpdateArea函数
-  *           才会将显存数组的数据发送到OLED硬件，进行显示
-  *           故调用显示函数后，要想真正地呈现在屏幕上，还需调用更新函数
-  */
-void OLED_UpdateArea(uint8_t X, uint8_t Y, uint8_t Width, uint8_t Height)
+void Delay_s(uint32_t xs)
 {
-	uint8_t j;
-	
-	/*参数检查，保证指定区域不会超出屏幕范围*/
-	if (X > 128-1) {return;}
-	if (Y > 64-1) {return;}
-	if (X + Width > 128) {Width = 128 - X;}
-	if (Y + Height > 64) {Height = 64 - Y;}
-	
-	/*遍历指定区域涉及的相关页*/
-	/*(Y + Height - 1) / 8 + 1的目的是(Y + Height) / 8并向上取整*/
-	for (j = Y / 8; j < (Y + Height - 1) / 8 + 1; j ++)
+	while(xs--)
 	{
-		/*设置光标位置为相关页的指定列*/
-		OLED_SetCursor(j, X);
-		/*连续写入Width个数据，将显存数组的数据写入到OLED硬件*/
-		OLED_WriteData(&OLED_DisplayBuf[j][X], Width);
+		Delay_ms(1000);
 	}
-	
-}
-
-
-
-
-
+} 
 
 
