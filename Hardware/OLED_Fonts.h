@@ -46,24 +46,13 @@ extern const ChineseCell8x8_t OLED_CF8x8[];  // 声明12x12字模数组
 extern const uint8_t Arrow[];
 extern const uint8_t UnKnown[];
 extern const uint8_t Image_setings[];
-extern const uint8_t Image_window[];
-extern const uint8_t Image_wechat[];
 extern const uint8_t Image_more[];
 extern const uint8_t Image_calc[];
-extern const uint8_t Image_night[];
-extern const uint8_t Image_sleep[];
 
 
 extern const uint8_t Image_settings_64[];
 extern const uint8_t Image_calc_64[];
-extern const uint8_t Image_night_64[];
 extern const uint8_t Image_more_64[];
-extern const uint8_t OLED_UI_LOGO[];
-extern const uint8_t OLED_UI_LOGOTEXT[];
-extern const uint8_t OLED_UI_LOGOTEXT64[];
-extern const uint8_t OLED_UI_LOGOGithub[];
-extern const uint8_t Image_alipay_QR_Code[];
-extern const uint8_t OLED_UI_SettingsLogo[];
 //...
 
 #endif
