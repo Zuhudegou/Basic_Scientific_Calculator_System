@@ -3,6 +3,7 @@
 #include "ctype.h"  //检索数字的函数  
 #include "cstring"
 #include "stdlib.h"
+#include "CAL_math.h"
 extern float Calfloatnum;
 extern int32_t Calintnum;
 extern int32_t Calsecintnum;
@@ -60,7 +61,7 @@ temp/=numarray[*p-1];
      
 
 //通过判断决定对应运算
-float switch_to_cal (char32_t Expression)
+void CAL_MATH()
 {
    float result;
 
