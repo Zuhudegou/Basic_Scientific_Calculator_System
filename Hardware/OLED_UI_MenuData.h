@@ -11,6 +11,15 @@ AboutOLED_UIMenuItems[],CalculatorMenuItems[],About_OperatorMenuItems[],Calculat
 extern MenuPage MainMenuPage,SettingsMenuPage,AboutThisDeviceMenuPage,
 AboutOLED_UIMenuPage,CalculatorMenuPage,About_OperatorMenuPage,CalculatorSecondMenuPage;
 
+typedef enum {
+    OP_NONE,
+    OP_PLUS,
+    OP_SUBTRACT,
+    OP_MULTIPLY,
+    OP_DIVIDE
+} OperatorType;
+
+OperatorType currentOperator = OP_NONE; // 初始未选择
 
 #ifdef __cplusplus
 }  // extern "C"
