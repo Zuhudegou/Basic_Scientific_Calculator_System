@@ -411,7 +411,7 @@
           "System",
           "Hardware",
           "../Basic_Scientific_Calculator_System-hhw",
-          ".cmsis/include",
+          ".",
           "RTE/_Target 1"
         ],
         "libList": [],

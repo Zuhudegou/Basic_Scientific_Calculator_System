@@ -39,8 +39,8 @@
 .\objects\cal_math.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
 .\objects\cal_math.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\objects\cal_math.o: Hardware\OLED_Fonts.h
-.\objects\cal_math.o: ..\Basic_Scientific_Calculator_System-hhw\bsp_key.h
-.\objects\cal_math.o: ..\Basic_Scientific_Calculator_System-hhw\bsp_encoder.h
+.\objects\cal_math.o: ..\Basic_Scientific_Calculator_System-main\bsp_key.h
+.\objects\cal_math.o: ..\Basic_Scientific_Calculator_System-main\bsp_encoder.h
 .\objects\cal_math.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\ctype.h
 .\objects\cal_math.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\cstring
 .\objects\cal_math.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h

@@ -38,5 +38,5 @@
 .\objects\oled_ui.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
 .\objects\oled_ui.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\objects\oled_ui.o: Hardware\OLED_Fonts.h
-.\objects\oled_ui.o: ..\Basic_Scientific_Calculator_System-hhw\bsp_key.h
-.\objects\oled_ui.o: ..\Basic_Scientific_Calculator_System-hhw\bsp_encoder.h
+.\objects\oled_ui.o: ..\Basic_Scientific_Calculator_System-main\bsp_key.h
+.\objects\oled_ui.o: ..\Basic_Scientific_Calculator_System-main\bsp_encoder.h

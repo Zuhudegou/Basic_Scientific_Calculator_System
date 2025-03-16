@@ -336,7 +336,7 @@
               <MiscControls>--no-multibyte-chars</MiscControls>
               <Define>USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.\Start;.\Library;.\User;.\System;.\Hardware;..\Basic_Scientific_Calculator_System-hhw</IncludePath>
+              <IncludePath>.\Start;.\Library;.\User;.\System;.\Hardware;..\Basic_Scientific_Calculator_System-hhw;..\Basic_Scientific_Calculator_System-main</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>

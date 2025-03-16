@@ -38,6 +38,6 @@
 .\objects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
 .\objects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\objects\main.o: .\Hardware\OLED_Fonts.h
-.\objects\main.o: ..\Basic_Scientific_Calculator_System-hhw\bsp_key.h
-.\objects\main.o: ..\Basic_Scientific_Calculator_System-hhw\bsp_encoder.h
+.\objects\main.o: ..\Basic_Scientific_Calculator_System-main\bsp_key.h
+.\objects\main.o: ..\Basic_Scientific_Calculator_System-main\bsp_encoder.h
 .\objects\main.o: .\Hardware\OLED_UI_MenuData.h
