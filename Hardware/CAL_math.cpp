@@ -8,8 +8,8 @@ extern float Calfloatnum;
 extern int32_t Calintnum;
 extern int32_t Calsecintnum;
 extern float Calsecfloatnum;
-//OperatorType currentOperator = OP_NONE; // 初始未选择
 
+float result;
 
 
 
@@ -65,7 +65,7 @@ temp/=numarray[*p-1];
 //通过判断决定对应运算
 void CAL_MATH()
 {
-   float result;
+   
 
         if (currentOperator == OP_PLUS) {
                 // Plus 被选中

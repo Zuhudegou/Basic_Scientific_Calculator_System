@@ -5,14 +5,13 @@
 
 // ColorMode 是一个在OLED_UI当中定义的bool类型变量，用于控制OLED显示的颜色模式， DARKMODE 为深色模式， LIGHTMOOD 为浅色模式。这里将其引出是为了创建单选框菜单项。
 // OLED_UI_Brightness 是一个在OLED_UI当中定义的int16_t类型变量，用于控制OLED显示的亮度。这里将其引出是为了创建调整亮度的滑动条窗口，范围0-255。
-extern int16_t OLED_UI_Brightness;
-static float Calfloatnum = 0.0;
-static int32_t Calintnum = 0;
-static float Calsecfloatnum = 0.0;
-static int32_t Calsecintnum = 0;
+ static int16_t OLED_UI_Brightness;
+ float Calfloatnum = 0.0;
+ int32_t Calintnum = 0;
+ float Calsecfloatnum = 0.0;
+ int32_t Calsecintnum = 0;
 
 
-OperatorType currentOperator = OP_NONE; // 初始未选择
 #define SPEED 10
 
 //关于窗口的结构体

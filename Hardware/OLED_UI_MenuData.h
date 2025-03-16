@@ -21,7 +21,7 @@ typedef enum {
     OP_DIVIDE
 } OperatorType;
 
-extern  OperatorType currentOperator = OP_NONE; // 初始未选择
+extern  OperatorType currentOperator; // 初始未选择
 
 #ifdef __cplusplus
 }  // extern "C"

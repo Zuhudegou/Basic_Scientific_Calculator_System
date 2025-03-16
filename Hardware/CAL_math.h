@@ -11,5 +11,6 @@ float CAL_floatsub(float num1,float num2);
 float CAL_floatmul(float num1,float num2);
 float CAL_floatdiv(float num1,float num2);
 void CAL_MATH();
+extern float result;
 #endif 
 
