@@ -336,7 +336,7 @@
               <MiscControls>--no-multibyte-chars</MiscControls>
               <Define>USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.\Start;.\Library;.\User;.\System;.\Hardware</IncludePath>
+              <IncludePath>.\Start;.\Library;.\User;.\System;.\Hardware;..\Basic_Scientific_Calculator_System-hhw;..\Basic_Scientific_Calculator_System-main</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -712,6 +712,46 @@
               <FileName>OLED_UI_MenuData.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Hardware\OLED_UI_MenuData.h</FilePath>
+            </File>
+            <File>
+              <FileName>CAL_CALCULATE.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Hardware\CAL_CALCULATE.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>CAL_CALCULATE.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\CAL_CALCULATE.h</FilePath>
+            </File>
+            <File>
+              <FileName>CAL_math.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Hardware\CAL_math.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>CAL_math.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\CAL_math.h</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_key.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\bsp_key.h</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\bsp_key.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_encoder.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\bsp_encoder.h</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_encoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\bsp_encoder.c</FilePath>
             </File>
           </Files>
         </Group>

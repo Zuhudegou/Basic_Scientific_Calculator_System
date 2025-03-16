@@ -223,13 +223,25 @@
             "path": "Hardware/CAL_CALCULATE.cpp"
           },
           {
-            "path": "Hardware/CAL_math.cpp"
-          },
-          {
             "path": "Hardware/CAL_CALCULATE.h"
           },
           {
+            "path": "Hardware/CAL_math.cpp"
+          },
+          {
             "path": "Hardware/CAL_math.h"
+          },
+          {
+            "path": "bsp_key.h"
+          },
+          {
+            "path": "bsp_key.c"
+          },
+          {
+            "path": "bsp_encoder.h"
+          },
+          {
+            "path": "bsp_encoder.c"
           }
         ],
         "folders": []
@@ -258,7 +270,7 @@
   "deviceName": null,
   "packDir": null,
   "miscInfo": {
-    "uid": "0325f423ecc8b6db2ae7e3a322df467b"
+    "uid": "552afc97cb98ab3f40e760b35505b47d"
   },
   "targets": {
     "Target 1": {
@@ -398,6 +410,7 @@
           "User",
           "System",
           "Hardware",
+          "../Basic_Scientific_Calculator_System-hhw",
           ".cmsis/include",
           "RTE/_Target 1"
         ],
