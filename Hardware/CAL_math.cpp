@@ -8,6 +8,8 @@ extern float Calfloatnum;
 extern int32_t Calintnum;
 extern int32_t Calsecintnum;
 extern float Calsecfloatnum;
+//OperatorType currentOperator = OP_NONE; // 初始未选择
+
 
 
 

@@ -11,6 +11,8 @@ static int32_t Calintnum = 0;
 static float Calsecfloatnum = 0.0;
 static int32_t Calsecintnum = 0;
 
+
+OperatorType currentOperator = OP_NONE; // 初始未选择
 #define SPEED 10
 
 //关于窗口的结构体
