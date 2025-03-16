@@ -1,10 +1,6 @@
 #include "OLED_UI_MenuData.h"
 #include "OLED_UI.h"
 
-/*此文件用于存放菜单数据。实际上菜单数据可以存放在任何地方，存放于此处是为了规范与代码模块化*/
-
-// ColorMode 是一个在OLED_UI当中定义的bool类型变量，用于控制OLED显示的颜色模式， DARKMODE 为深色模式， LIGHTMOOD 为浅色模式。这里将其引出是为了创建单选框菜单项。
-// OLED_UI_Brightness 是一个在OLED_UI当中定义的int16_t类型变量，用于控制OLED显示的亮度。这里将其引出是为了创建调整亮度的滑动条窗口，范围0-255。
  static int16_t OLED_UI_Brightness;
  float Calfloatnum = 0.0;
  int32_t Calintnum = 0;
