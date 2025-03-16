@@ -7,12 +7,21 @@ extern "C" {
 
 
 extern MenuItem MainMenuItems[],SettingsMenuItems[],AboutThisDeviceMenuItems[],
-AboutOLED_UIMenuItems[],MoreMenuItems[],Font8MenuItems[] ,Font12MenuItems[] ,
-Font16MenuItems[] ,Font20MenuItems[],LongMenuItems[],SpringMenuItems[],LongListMenuItems[],SmallAreaMenuItems[],CalculatorMenuItems[];
+AboutOLED_UIMenuItems[],CalculatorMenuItems[],About_OperatorMenuItems[],CalculatorSecondMenuItems[];
 extern MenuPage MainMenuPage,SettingsMenuPage,AboutThisDeviceMenuPage,
-AboutOLED_UIMenuPage,MoreMenuPage,Font8MenuPage,Font12MenuPage,Font16MenuPage
-,Font20MenuPage,LongMenuPage,SpringMenuPage,LongListMenuPage,SmallAreaMenuPage,CalculatorMenuPage;
+AboutOLED_UIMenuPage,CalculatorMenuPage,About_OperatorMenuPage,CalculatorSecondMenuPage;
 
+
+
+typedef enum {
+    OP_NONE,
+    OP_PLUS,
+    OP_SUBTRACT,
+    OP_MULTIPLY,
+    OP_DIVIDE
+} OperatorType;
+
+extern  OperatorType currentOperator; // 初始未选择
 
 #ifdef __cplusplus
 }  // extern "C"

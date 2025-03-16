@@ -13,6 +13,8 @@ extern "C" {
 #include "OLED.h"
 #include "stdint.h"
 #include "stdbool.h"
+#include "bsp_key.h"
+#include "bsp_encoder.h"	
 
 // ÏÔ´æ»º´æÇø
 extern uint8_t OLED_DisplayBuf[OLED_HEIGHT/8][OLED_WIDTH];
@@ -315,8 +317,8 @@ typedef struct MenuItem {
 
 /******************************************************************************** */
 /******************************************************************************** */
-void GetFPS(void);
-void OLED_UI_ShowFPS(void);
+//void GetFPS(void);
+//void OLED_UI_ShowFPS(void);
 OLED_Font GetOLED_Font(OLED_Font fontsize,bool style);
 void ReverseCoordinate(int16_t X, int16_t Y, int16_t Width, int16_t Height,uint8_t Style);
 void OLED_UI_FadeOut_Masking(int16_t x0, int16_t y0, int16_t width, int16_t height, int8_t fadeLevel);

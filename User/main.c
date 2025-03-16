@@ -1,5 +1,7 @@
 #include "OLED_UI.h"
 #include "OLED_UI_MenuData.h"
+
+OperatorType currentOperator = OP_NONE; // 唯一初始化位置
 int main(){
 	
 	OLED_UI_Init(&MainMenuPage);

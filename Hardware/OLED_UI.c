@@ -10,8 +10,6 @@ MenuWindow *CurrentWindow = NULL;									//全局结构体指针，当前窗口的指针
 MutexFlag KeyEnterFlag = FLAGEND;										//全局enter按键的互斥锁，互斥锁为FLAGSTART时表示正在执行回调函数
 MutexFlag FadeOutFlag = FLAGEND;										//渐隐效果的互斥锁，互斥锁为FLAGSTART时表示正在执行渐隐效果
 MutexFlag WindowFlag = FLAGEND;										//窗口互斥锁，互斥锁为FLAGSTART时表示正在执行窗口动画
-bool ColorMode = DARKMODE;											//全局布尔型数据，存储当前显示模式，true为深色模式，false为浅色模式
-bool OLED_UI_ShowFps = true;										//全局布尔型数据，用于控制是否显示帧率
 int16_t OLED_UI_Brightness = 100;									//全局变量，存储当前屏幕亮度
 OLED_UI_WindowSustainCounter OLED_SustainCounter = {0,false};			//用于存储窗口持续时间的结构体
 int16_t WindowProbDeltaData = 0;											//窗口进度条数据的增量数据
@@ -34,41 +32,6 @@ OLED_ChangePoint OLED_UI_PageStartPoint ;
 OLED_ChangeDistance OLED_UI_LineStep;
 
 
-
-/**
- * @brief 获取当前屏幕刷新率，结果存储在全局变量OLED_FPS.value中
- * @param 无
- * @note 该函数需要放在20ms周期内调用，否则会导致计数错误
- * @return 无
- */
-void GetFPS(void){
-	if(OLED_FPS.step<49){
-		OLED_FPS.step++;
-	}else{
-		OLED_FPS.step=0;
-		OLED_FPS.value = OLED_FPS.count;
-		OLED_FPS.count=0;
-	}
-}
-
-/**
- * @brief 显示当前屏幕刷新率
- * @param 无
- * @note 需将此函数放在主循环当中，每循环一次记为一次刷新。
- * @return 无
- */
-void OLED_UI_ShowFPS(void){
-    OLED_FPS.count ++;
-	
-	if (OLED_UI_ShowFps){
-		OLED_Printf(OLED_WIDTH - CalcStringWidth(OLED_8X8_FULL, OLED_6X8_HALF, "%d",OLED_FPS.value),0,OLED_6X8_HALF,"%d",OLED_FPS.value);
-	}
-}
-/**
- * @brief 获取当前页面的字体宽度
- * @param style CHINESE【中文】或 ASCII【ASCII】
- * @return 当前页面的字体宽度
- */
 OLED_Font GetOLED_Font(OLED_Font fontsize,bool style){
 	//根据当前页面的字体大小设置字体
 	OLED_Font ChineseFont,ASCIIFont;
@@ -1674,7 +1637,6 @@ void MoveMenuElements(void){
 	//显示光标
 	ReverseCoordinate(OLED_UI_Cursor.CurrentArea.X,OLED_UI_Cursor.CurrentArea.Y,OLED_UI_Cursor.CurrentArea.Width,OLED_UI_Cursor.CurrentArea.Height,CurrentMenuPage->General_CursorStyle);
 	//设置颜色模式
-	OLED_SetColorMode(ColorMode);
 
 	OLED_Brightness(OLED_UI_Brightness);
 
@@ -1717,8 +1679,8 @@ void OLED_UI_MainLoop(void){
 	//当互斥锁被置位时，运行当前菜单项的回调函数
 	RunCurrentCallBackFunction();
 	
-	//显示FPS
-	OLED_UI_ShowFPS();
+
+//	OLED_UI_ShowFPS();
 	//刷屏
 	OLED_Update();
 }
@@ -1734,7 +1696,7 @@ void OLED_UI_MainLoop(void){
  */
 void OLED_UI_InterruptHandler(void){
 	// 获取当前屏幕刷新率
-    GetFPS();
+//    GetFPS();
 	MenuWindow* window = CurrentWindow;
 	// 如果当前有正在执行的回调函数，则不处理中断内的任务
     if(GetEnterFlag() && GetFadeoutFlag()){
